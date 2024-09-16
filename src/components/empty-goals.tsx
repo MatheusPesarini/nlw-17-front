@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react'
 
-import logo from './assets/logo-in-orbit.svg'
-import letsStart from './assets/lets-start-illustration.svg'
+import logo from '../assets/logo-in-orbit.svg'
+import letsStart from '../assets/lets-start-illustration.svg'
 import { Button } from '../components/ui/button'
 import { DialogTrigger } from './ui/dialog'
 
