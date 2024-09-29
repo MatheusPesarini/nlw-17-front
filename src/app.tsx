@@ -1,42 +1,33 @@
-import { Dialog } from './components/ui/dialog'
+import { Dialog } from '@radix-ui/react-dialog'
 import { CreateGoal } from './components/create-goal'
-import { Summary } from './components/summary'
-import { useEffect, useState } from 'react'
+import { WeeklySummary } from './components/weekly-summary'
+import { useQuery } from '@tanstack/react-query'
+import { getSummary } from './http/get-summary'
+import { Loader2 } from 'lucide-react'
 import { EmptyGoals } from './components/empty-goals'
-// import { EmptyGoals } from './components/empty-goals'
-
-type SummaryResponse = {
-  completed: number
-  total: number
-  goalsPerDay: Record<
-    string,
-    {
-      id: string
-      title: string
-      createdAt: string
-    }[]
-  >
-}
 
 export function App() {
-  const [summary, setSummary] = useState<SummaryResponse | null>(null)
+  const { data, isLoading } = useQuery({
+    queryKey: ['summary'],
+    queryFn: getSummary,
+  })
 
-  useEffect(() => {
-    fetch('http://localhost:3333/summary')
-      .then(response => {
-        return response.json()
-      })
-      .then(data => {
-        setSummary(data.summary)
-      })
-  }, [])
+  if (isLoading || !data) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Loader2 className="text-zinc-500 animate-spin size-10" />
+      </div>
+    )
+  }
 
   return (
     <Dialog>
-      {summary?.total && summary.total > 0 ? <Summary /> : <EmptyGoals />}
+      {data.summary.total > 0 ? (
+        <WeeklySummary summary={data.summary} />
+      ) : (
+        <EmptyGoals />
+      )}
 
-      {/* <EmptyGoals /> */}
-      {/*<Summary />*/}
       <CreateGoal />
     </Dialog>
   )
